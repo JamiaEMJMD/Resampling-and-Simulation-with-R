@@ -1,0 +1,73 @@
+---
+title: "prpblem-3"
+latex_engine: lualatex
+output: pdf_document
+---
+
+
+
+```{r}
+#Problem-3:Assume that during a three-hour period spent outside, a person
+#recorded the temperature, the amount of time they mowed the
+#grass, and their water consumption. The experiment was conducted
+#on 7 randomly selected days during the summer. 
+
+#(a) Fit the Water Consumption as a linear function of the Temperature
+#(T) and the Time mowing the grass (TMG) by
+#means of a multiple regression model. Hint: Use function
+#lm in R.
+library(combinat)
+df=data.frame(T=c(75,83,85,85,92,97,99),W=c(16,20,25,27,32,48,48),
+              TMG=c(1.85,1.25,1.5,1.75,1.15,1.75,1.6))
+df                                                                         
+model<-lm(W~ T+TMG,data=df)
+an<-anova(model)
+an
+FTtrue<-an$"F value"[1]     #True F value of T before permutation test 
+FTMGtrue<-an$"F value"[2]   #gives the significance between TMG and W
+FTtrue
+FTMGtrue
+#F-value of the variable TR without permutation testis 584.3158
+#F-value for the variable TMG without permutation test is 42.02869
+
+
+
+#(b) Test the significance of the variables T and TMG using an
+#exact permutation test. Compare the results with those obtained
+#with the multiple regression model.
+
+#exact test
+T=c(75,83,85,85,92,97,99)
+W=c(16,20,25,27,32,48,48)
+TMG=c(1.85,1.25,1.5,1.75,1.15,1.75,1.6)
+df=data.frame(T=c(75,83,85,85,92,97,99),W=c(16,20,25,27,32,48,48),
+              TMG=c(1.85,1.25,1.5,1.75,1.15,1.75,1.6))
+n = length(T)
+nr=fact(n) #number of rearrangements to be examined  
+FT=numeric(nr)
+FTMG=numeric(nr)
+
+for (i in 1:nr){
+  newW<- permn(W)
+  newW
+  model1<- lm(newW[[i]]~ T+TMG, data=df) 
+  an1<-anova(model1)
+  FT[i]<-an1$"F value"[1] 
+  FTMG[i]<-an1$"F value"[2]
+}
+
+hist(FT, main = " Histogram of the FT")
+hist(FTMG, main = " Histogram of the FTMG")
+an1
+# F value of T after permutation test
+FT1<-an1$"F value"[1]    #gives the significance between T and W
+# F value of TMG after permutation test
+FTMG1<-an$"F value"[2]   #gives the significance between TMG and W
+FT1
+FTMG1
+
+#the f-values are same for the variable TMG for both exact test and 
+#from multiple linear regression model,but for the variable T
+#F values are different after in exact test and regressiom model
+```
+
