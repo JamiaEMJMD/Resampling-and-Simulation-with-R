@@ -1,0 +1,91 @@
+---
+title: "Problem-1"
+author: "Samar Moussa/NIU:1661270 _ Jamia Begum/NIU: 1676891"
+Professor:Pere Puig
+Course:Data visualization and modelling
+date: "2022-12-30"
+output:
+  pdf_document:
+    latex_engine: lualatex
+---
+
+```{r setup, include=FALSE}
+
+#install.packages("combinat")
+
+library(combinat)
+
+```
+
+
+
+
+
+
+
+```{r}
+#exercise:1. Remember one of the examples presented in class: 
+
+#The first row is chest circumference (in inches) of five subjects. 
+#Let us call this X. 
+#The second row is the respective total volumes of air that can be breathed in
+#and out in one minute (in liters) for the same five subjects. Let us call this Y.
+#X: 39, 29, 60, 40, 32
+#Y: 11, 5, 20, 8, 6
+
+#Download the package combinat in order to use the function permn().
+#Perform an exact test for H0 : ρ = 0 against H1 : ρ > 0.
+#Use Pearson and Spearman correlation coefficient as well
+```
+
+
+#Answer: suppose,
+##The null hypothesis is, H0: rho = 0 (i.e X and Y are not correlated) 
+##The Alternative hypothesis is,H1: rho>0 (i.e X and Y are positively correlated)
+
+
+```{r}
+
+
+x= c(39,29,60,40,32)
+y= c(11,5,20,8,6)
+sttrue1= cor(x,y,method= "pearson") #taking statistic as the Pearson correlation coefficient
+sttrue1
+sttrue2= cor(x,y,method= "spearman") #taking statistic as the spearman correlation coefficient
+sttrue2
+n=length(y)
+nr=fact(n) #number of rearrangements to be examined 
+st1=numeric(nr)
+st2=numeric(nr)
+cnt1=0 #for initiating counting
+cnt2=0
+d=permn(y) #Permuting randomly the Y column leaving the X fixed
+for (i in 1:nr)
+  { st1[i]<-cor(d[[i]],x,method= "pearson") 
+  if (st1[i] >=sttrue1)cnt1=cnt1+1 #comparing the true statistic and the evaluated statistic
+  
+  st2[i]<-cor(d[[i]],x,method= "spearman") 
+  if (st2[i] >=sttrue2)cnt2=cnt2+1 #comparing the true statistic and the evaluated statistic
+        
+  } 
+p_value1<-cnt1/nr #pvalue(using pearson)
+p_value1
+
+p_value2<-cnt2/nr #pvalue(using spearman)
+p_value2
+
+hist(st1)
+points(sttrue1,0,pch = 16,
+       col = "blue")
+
+hist(st2)
+points(sttrue2,0,pch = 16,
+       col = "red")
+
+#in both cases,since the p-value is lower than 0.05,we have lower evidence to support the null hypothesis
+#therefore,the null hypothesis is rejected,so we can conclude that
+#Chest circumference and volume of air are positively correlated
+
+```
+
+
