@@ -1,0 +1,63 @@
+---
+title: "Assignment-2"
+author: 'Jamia Begum/NIU: 1676891'
+date: "2023-01-19"
+output: pdf_document
+latex_engine: lualatex
+---
+
+
+```{r}
+
+#To calculate MLE of the parameter lambda in the zero truncated Poisson distribution
+#input the data for the random variable
+#rep(x,n) gives n times the r.v x has been repeated
+
+sights  <-  c(rep(1,11),rep(2,13),rep(3,5),4,5,rep(7,2))
+
+#get the size of the sample
+n<-length(sights)
+#define the log-likelihood function as follows
+loglike<-function(lamda,sights){
+  -n*log(exp(lamda)-1)+n*mean(sights)*log(lamda)
+}
+# Find maximum likelihood estimate(MLE) of lambda 
+lambda_MLE <- optimize(loglike, c(0, 33), sights, maximum = TRUE)$maximum 
+lambda_MLE
+#estimating the total number of females using
+#the Horvitz-Thompson estimator
+N<-n/(1-exp(-lambda_MLE))
+N
+
+
+```
+
+```{r}
+#Use parametric bootstrap to compute a confidence interval 
+#of the total number of females (N)
+
+nsim<-1000 #setting the number of simulation
+#we will do simulation for computing the parameter lambda
+lambdab<-numeric( nsim) #create a vector to store data
+
+for (i in 1:nsim){
+  
+  sightsb <- sample (sights , n, replace =T)
+  
+  # Obtaining parameter estimates via bootstrap
+  lambdab[i] <- optimize(loglike, c(0, 33), sightsb, maximum = TRUE)$maximum
+  
+}
+
+# Using Horvitz-Thompson estimator to obtain total number of females
+count <-n/(1-exp(-lambdab))
+# Bootstrap estimate of total number of females(N) 
+Nb<-mean(count)
+Nb
+hist(count)
+# Calculating 95% confidence interval for N
+quantile(count, probs = c(0.025, 0.975))
+
+
+```
+
